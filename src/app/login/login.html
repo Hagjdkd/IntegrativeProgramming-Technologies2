@@ -6,21 +6,61 @@
   <div class="login-card">
     <div class="logo-container">
       <div class="logo-circle">
-        <img src="./BryzztoffLogo.png" alt="Logo"> </div>
+        <img src="./BryzztoffLogo.png" alt="Logo">
+      </div>
     </div>
 
-    <h2>Login</h2>
+    <h2>{{ isSignUpMode ? 'Create Account' : 'Login' }}</h2>
     
     <div class="input-group">
       <input type="text" [(ngModel)]="username" placeholder="Username">
     </div>
+
+    @if (isSignUpMode) {
+      <div class="input-group">
+        <input type="email" [(ngModel)]="email" placeholder="Email Address">
+      </div>
+    }
     
     <div class="input-group">
       <input type="password" [(ngModel)]="password" placeholder="Password">
     </div>
     
-    <button (click)="login()">Sign In</button>
+    <div class="button-group">
+      <button class="btn-primary" (click)="login()">
+        {{ isSignUpMode ? 'Back to Login' : 'Sign In' }}
+      </button>
+      
+      <button class="btn-secondary" (click)="signup()">
+        {{ isSignUpMode ? 'Register Now' : 'Sign Up' }}
+      </button>
+    </div>
   </div>
-</div>
+  @if (isSignUpMode) {
+    <div class="table-container">
+      <div class="table-header">
+        <h3>Registered Users</h3>
+        <button class="clear-btn" (click)="clearTable()">Clear All</button>
+      </div>
 
-<router-outlet></router-outlet>
+      <table>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Password</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users; track user.username) {
+            <tr>
+              <td>{{ user.username }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.password }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      </div>
+    }
+</div>
