@@ -7,12 +7,12 @@ import { Router } from '@angular/router';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet,FormsModule],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  templateUrl: './login.html',
+  styleUrl: './login.css'
 })
-export class App {
+export class Login {
 
- username = 'admin';
+ username = '';
  password = '';
  isLoggedin = false;
  
@@ -26,5 +26,8 @@ export class App {
     } else {
      alert('Invalid username or password.');
    }
+ }
+ signup() {
+   // Handle signup logic here
  }
 }
