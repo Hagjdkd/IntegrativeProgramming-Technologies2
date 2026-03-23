@@ -1,77 +1,78 @@
-import { Component, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; // Added these
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule],
+  imports: [ReactiveFormsModule], // Swap FormsModule for ReactiveFormsModule
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
 export class Login {
-  username = '';
-  password = '';
-  email = '';
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+
   isSignUpMode = false;
-
-  constructor(private router: Router) {}
-
- // 1. Initialize by checking LocalStorage first
+  loginForm: FormGroup;
   users: any[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-signup() {
-  if (!this.isSignUpMode) {
-    this.isSignUpMode = true;
-  } else {
-    // Make sure to include the password here!
-    const newUser = { 
-      username: this.username, 
-      email: this.email,
-      password: this.password 
-    };
-    
-    this.users.push(newUser);
-    localStorage.setItem('registeredUsers', JSON.stringify(this.users));
-    
-    alert('User Registered!');
-    this.isSignUpMode = false;
-    this.clearFields();
+
+  constructor() {
+  
+    this.loginForm = this.fb.group({
+      username: ['', [Validators.required, Validators.minLength(3)]],
+      password: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
+      email: [''] 
+    });
   }
-}
+
+  signup() {
+    if (!this.isSignUpMode) {
+      this.isSignUpMode = true;
+      this.loginForm.get('email')?.setValidators([Validators.required, Validators.email]);
+    } else {
+      if (this.loginForm.valid) {
+        const newUser = this.loginForm.value; // Gets all fields at once
+        this.users.push(newUser);
+        localStorage.setItem('registeredUsers', JSON.stringify(this.users));
+        
+        alert('User Registered!');
+        this.isSignUpMode = false;
+        this.loginForm.reset();
+      } else {
+        alert('Please fill out the form correctly.');
+      }
+    }
+  }
 
   login() {
-  if (this.isSignUpMode) {
-    this.isSignUpMode = false;
-    return;
+    if (this.isSignUpMode) {
+      this.isSignUpMode = false;
+      this.loginForm.get('email')?.clearValidators();
+      return;
+    }
+
+    const { username, password } = this.loginForm.value;
+
+    if (username === 'admin' && password === 'admin123') {
+      this.router.navigate(['/dashboard']);
+      return;
+    }
+
+    const userExists = this.users.find(u => u.username === username && u.password === password);
+
+    if (userExists) {
+      alert(`Welcome, ${username}!`);
+      this.router.navigate(['/dashboard']);
+    } else {
+      alert('Invalid username or password.');
+    }
   }
 
-
-  if (this.username === 'admin' && this.password === 'admin123') {
-    this.router.navigate(['/dashboard']);
-    return;
+  clearTable() {
+    if (confirm('Are you sure?')) {
+      localStorage.removeItem('registeredUsers');
+      this.users = [];
+    }
   }
-
-  const userExists = this.users.find(u => 
-    u.username === this.username && u.password === this.password
-  );
-
-  if (userExists) {
-    alert('Welcome, ' + this.username + '!');
-    this.router.navigate(['/dashboard']);
-  } else {
-    alert('Invalid username or password.');
-  }
-}
-  clearFields() {
-    this.username = '';
-    this.email = '';
-    this.password = '';
-  }
- clearTable() {
-  if (confirm('Are you sure you want to delete all registered users?')) {
-    localStorage.removeItem('registeredUsers');
-    this.users = [];
-    alert('Database cleared!');
-  }
-}
 }

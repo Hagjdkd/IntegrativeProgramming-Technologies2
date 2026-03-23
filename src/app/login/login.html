@@ -1,33 +1,29 @@
 <div class="login-container">
-  <div class="website-header">
-    <span class="site-name">Bryzztoff Complaint System</span>
-  </div>
-
-  <div class="login-card">
-    <div class="logo-container">
-      <div class="logo-circle">
-        <img src="./BryzztoffLogo.png" alt="Logo">
-      </div>
+  <form class="login-card" [formGroup]="loginForm"> <div class="logo-container">
+      <div class="logo-circle"><img src="./BryzztoffLogo.png" alt="Logo"></div>
     </div>
 
     <h2>{{ isSignUpMode ? 'Create Account' : 'Login' }}</h2>
     
     <div class="input-group">
-      <input type="text" [(ngModel)]="username" placeholder="Username">
+      <input type="text" formControlName="username" placeholder="Username">
+      @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
+        <small class="error">Username is required (min 3 chars)</small>
+      }
     </div>
 
     @if (isSignUpMode) {
       <div class="input-group">
-        <input type="email" [(ngModel)]="email" placeholder="Email Address">
+        <input type="email" formControlName="email" placeholder="Email Address">
       </div>
     }
     
     <div class="input-group">
-      <input type="password" [(ngModel)]="password" placeholder="Password">
+      <input type="password" formControlName="password" placeholder="Password">
     </div>
     
     <div class="button-group">
-      <button class="btn-primary" (click)="login()">
+      <button class="btn-primary" (click)="login()" [disabled]="!isSignUpMode && loginForm.get('username')?.invalid">
         {{ isSignUpMode ? 'Back to Login' : 'Sign In' }}
       </button>
       
@@ -35,32 +31,6 @@
         {{ isSignUpMode ? 'Register Now' : 'Sign Up' }}
       </button>
     </div>
-  </div>
-  @if (isSignUpMode) {
-    <div class="table-container">
-      <div class="table-header">
-        <h3>Registered Users</h3>
-        <button class="clear-btn" (click)="clearTable()">Clear All</button>
-      </div>
+  </form>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Password</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (user of users; track user.username) {
-            <tr>
-              <td>{{ user.username }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.password }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-      </div>
-    }
-</div>
+  </div>
