@@ -20,18 +20,40 @@
 
     <main class="content-area">
       <div class="welcome-card">
-        <h2>Welcome back, Admin</h2>
-        <p>Your system is running smoothly.</p>
-      </div>
-
-      <div class="stats-grid">
-        <div class="data-card">
-          <span class="label">Total Revenue</span>
-          <span class="value">₱12,450</span>
+        <h2>Complaints Database</h2>
+        
+        <div class="search-container">
+          <input 
+            type="text" 
+            placeholder="Search complaints..." 
+            (input)="onSearchChange($any($event.target).value)">
         </div>
-        <div class="data-card">
-          <span class="label">Active Users</span>
-          <span class="value">1,102</span>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Issue</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of filteredComplaints.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage); track item.id) {
+              <tr>
+                <td>#{{ item.id }}</td>
+                <td>{{ item.user }}</td>
+                <td>{{ item.issue }}</td>
+                <td><span class="status-badge">{{ item.status }}</span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        <div class="pagination">
+          <button [disabled]="currentPage === 1" (click)="currentPage = currentPage - 1">Prev</button>
+          <span>Page {{ currentPage }} of {{ totalPages || 1 }}</span>
+          <button [disabled]="currentPage >= totalPages" (click)="currentPage = currentPage + 1">Next</button>
         </div>
       </div>
     </main>

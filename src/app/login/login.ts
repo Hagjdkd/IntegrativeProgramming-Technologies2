@@ -18,17 +18,18 @@ export class Login {
   users: any[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
 
   constructor() {
-  
+    // Initializing the form as seen in your notes
     this.loginForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
-      email: [''] 
+      email: [''] // We will add/remove validation dynamically
     });
   }
 
   signup() {
     if (!this.isSignUpMode) {
       this.isSignUpMode = true;
+      // Add email validation only when in Sign Up mode
       this.loginForm.get('email')?.setValidators([Validators.required, Validators.email]);
     } else {
       if (this.loginForm.valid) {
