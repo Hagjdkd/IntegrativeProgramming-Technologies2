@@ -14,4 +14,7 @@ export class Dashboard {
   logout() {
     this.router.navigate(['/login']);
   }
+  goToPortfolio() {
+    this.router.navigate(['/portfolio']);
+  }
 }
